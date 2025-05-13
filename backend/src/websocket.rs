@@ -3,6 +3,10 @@ use axum::{
         ws::{close_code, CloseFrame, Message, WebSocket, WebSocketUpgrade},
         State,
     },
+    http::{
+        header::{HeaderMap, ORIGIN},
+        StatusCode,
+    },
     response::IntoResponse,
 };
 use futures_util::{
@@ -30,8 +34,17 @@ enum ClosingSignal {
 
 pub async fn websocket_handler(
     websocket: WebSocketUpgrade,
+    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
+    if let Some(origin) = headers.get(ORIGIN) {
+        warn!("{}", origin.to_str().unwrap_or_default());
+        if origin.as_bytes() != state.config.svelte_url.as_bytes() {
+            return StatusCode::UNAUTHORIZED.into_response();
+        }
+    } else {
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
     websocket.on_upgrade(|socket| handle_websocket(socket, state))
 }
 
@@ -192,7 +205,7 @@ async fn close_connection(
 ) {
     let message = match signal {
         ClosingSignal::WebSocketErr => {
-            error!(
+            debug!(
                 "Websocket error: {}",
                 error_info.unwrap_or("unknown websocket error")
             );

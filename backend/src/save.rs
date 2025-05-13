@@ -23,9 +23,9 @@ struct SavedState {
     total: usize,
 }
 
-pub fn load(file_path: &str, State(state): State<Arc<AppState>>) {
-    if Path::new(file_path).exists() {
-        match fs::read_to_string(file_path) {
+pub fn load(State(state): State<Arc<AppState>>) {
+    if Path::new(&state.config.state_path).exists() {
+        match fs::read_to_string(state.config.state_path.clone()) {
             Ok(data) => match serde_json::from_str::<SavedState>(&data) {
                 Ok(data_read) => {
                     state.counters.red.store(data_read.red, Release);
@@ -75,7 +75,7 @@ pub fn load(file_path: &str, State(state): State<Arc<AppState>>) {
     }
 }
 
-pub async fn save(file_path: &str, State(state): State<Arc<AppState>>) -> Result<(), AppError> {
+pub async fn save(State(state): State<Arc<AppState>>) -> Result<(), AppError> {
     let saved_state = json!({
         "total_users": state.total_users.load(Acquire),
         "red": state.counters.red.load(Acquire),
@@ -92,7 +92,7 @@ pub async fn save(file_path: &str, State(state): State<Arc<AppState>>) -> Result
     temp_file.flush()?;
 
     let temp_path = temp_file.into_temp_path();
-    fs::copy(&temp_path, file_path)?;
+    fs::copy(&temp_path, state.config.state_path.clone())?;
 
     temp_path.close()?;
 

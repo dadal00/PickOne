@@ -9,7 +9,7 @@ use crate::{
 };
 use axum::{
     extract::State,
-    http::{header::CONTENT_TYPE, HeaderName, Method},
+    http::{header::CONTENT_TYPE, Method},
     routing::get,
     Router,
 };
@@ -40,43 +40,42 @@ async fn main() -> Result<(), AppError> {
 
     info!("Starting server...");
 
-    let config = Config::load()?;
-
-    info!("Server configuration");
-    info!("state_path = {}", config.state_path);
-    info!("rust_port = {}", config.rust_port);
-    info!("svelte_url = {}", config.svelte_url);
-
     let (broadcast_tx, _) = broadcast::channel(100);
     let state = Arc::new(AppState {
         metrics: Metrics::default(),
         counters: Counters::default(),
         concurrent_users: AtomicUsize::new(0),
         total_users: AtomicUsize::new(0),
+        config: Config::load()?,
         broadcast_tx,
     });
 
-    load(&config.state_path, State(state.clone()));
+    info!("Server configuration");
+    info!("state_path = {}", state.config.state_path);
+    info!("rust_port = {}", state.config.rust_port);
+    info!("svelte_url = {}", state.config.svelte_url);
 
-    let state_clone = state.clone();
-    let state_path = config.state_path.clone();
+    load(State(state.clone()));
+
+    let save_state = state.clone();
     tokio::spawn(async move {
         let mut interval = interval(Duration::from_secs(60 * 30));
         loop {
             interval.tick().await;
-            if let Err(e) = save(&state_path, State(state_clone.clone())).await {
+            if let Err(e) = save(State(save_state.clone())).await {
                 error!("Failed to save state: {}", e);
             }
         }
     });
 
+    let origin_state = state.clone();
     let cors = CorsLayer::new()
         .allow_origin(AllowOrigin::predicate(move |origin, _req| {
-            origin.as_bytes() == config.svelte_url.as_bytes()
+            info!("{}", origin.to_str().unwrap_or_default());
+            origin.as_bytes() == origin_state.config.svelte_url.as_bytes()
         }))
         .allow_methods([Method::GET, Method::OPTIONS])
-        .allow_headers([CONTENT_TYPE, HeaderName::from_static("traceparent")])
-        .allow_credentials(true)
+        .allow_headers([CONTENT_TYPE])
         .max_age(Duration::from_secs(60 * 60));
 
     let app = Router::new()
@@ -85,7 +84,7 @@ async fn main() -> Result<(), AppError> {
         .layer(cors)
         .with_state(state.clone());
 
-    let addr = format!("0.0.0.0:{}", config.rust_port);
+    let addr = format!("0.0.0.0:{}", state.config.rust_port);
     info!("Binding to {}", addr);
 
     let listener = TcpListener::bind(&addr).await?;
@@ -95,7 +94,7 @@ async fn main() -> Result<(), AppError> {
         .with_graceful_shutdown(shutdown_signal())
         .await?;
 
-    if let Err(e) = save(&config.state_path, State(state.clone())).await {
+    if let Err(e) = save(State(state.clone())).await {
         error!("Failed to save state: {}", e);
     }
     info!("Server shutdown complete");
