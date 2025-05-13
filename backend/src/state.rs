@@ -1,5 +1,6 @@
 use crate::config::Config;
 use crate::metrics::Metrics;
+use crate::websocket::ConnectionMap;
 use std::sync::atomic::AtomicUsize;
 use tokio::sync::broadcast::Sender;
 
@@ -10,6 +11,7 @@ pub struct AppState {
     pub broadcast_tx: Sender<String>,
     pub metrics: Metrics,
     pub config: Config,
+    pub connection_map: ConnectionMap,
 }
 
 pub struct Counters {

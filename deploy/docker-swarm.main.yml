@@ -11,6 +11,8 @@ services:
         delay: 5s
     volumes:
       - ./saved_state.json:${RUST_STATE_PATH}
+    secrets:
+      - RUST_HASH_SALT
     logging:
       driver: loki
       options:
@@ -24,6 +26,7 @@ services:
       - RUST_LOG=${RUST_LOG}
       - SVELTE_URL=${SVELTE_URL}
       - RUST_STATE_PATH=${RUST_STATE_PATH}
+      - RUST_MAX_CONNECTIONS_PER_IP=${RUST_MAX_CONNECTIONS_PER_IP}
 
   svelte:
     image: counter_svelte:latest
@@ -72,6 +75,10 @@ services:
       - ./caddy_config:/config
       - ./caddy_logs:/var/log/caddy
       - ./caddy_config/Caddyfile:/etc/caddy/Caddyfile
+
+secrets:
+  RUST_HASH_SALT:
+    external: true
 
 networks:
   main_net:

@@ -13,7 +13,9 @@ use axum::{
     routing::get,
     Router,
 };
+use dashmap::DashMap;
 use std::{
+    net::SocketAddr,
     sync::{atomic::AtomicUsize, Arc},
     time::Duration,
 };
@@ -47,6 +49,7 @@ async fn main() -> Result<(), AppError> {
         concurrent_users: AtomicUsize::new(0),
         total_users: AtomicUsize::new(0),
         config: Config::load()?,
+        connection_map: Arc::new(DashMap::new()),
         broadcast_tx,
     });
 
@@ -71,7 +74,6 @@ async fn main() -> Result<(), AppError> {
     let origin_state = state.clone();
     let cors = CorsLayer::new()
         .allow_origin(AllowOrigin::predicate(move |origin, _req| {
-            info!("{}", origin.to_str().unwrap_or_default());
             origin.as_bytes() == origin_state.config.svelte_url.as_bytes()
         }))
         .allow_methods([Method::GET, Method::OPTIONS])
@@ -82,7 +84,8 @@ async fn main() -> Result<(), AppError> {
         .route("/api/ws", get(websocket_handler))
         .route("/metrics", get(metrics_handler))
         .layer(cors)
-        .with_state(state.clone());
+        .with_state(state.clone())
+        .into_make_service_with_connect_info::<SocketAddr>();
 
     let addr = format!("0.0.0.0:{}", state.config.rust_port);
     info!("Binding to {}", addr);

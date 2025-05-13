@@ -1,4 +1,5 @@
 use crate::error::AppError;
+use std::{env, fs::read_to_string};
 use tracing::{info, warn};
 
 pub const MAX_BYTES: u8 = 10;
@@ -8,6 +9,8 @@ pub struct Config {
     pub rust_port: u16,
     pub svelte_url: String,
     pub state_path: String,
+    pub max_connections_per_ip: u8,
+    pub hash_salt: String,
 }
 
 impl Config {
@@ -32,17 +35,42 @@ impl Config {
             })
             .unwrap_or_else(|_| "/saved_state.json".into());
 
+        let max_connections_per_ip = var("RUST_MAX_CONNECTIONS_PER_IP")
+            .inspect_err(|_| {
+                info!("RUST_MAX_CONNECTIONS_PER_IP not set, using default");
+            })
+            .unwrap_or_else(|_| "5".into())
+            .parse()
+            .map_err(|_| AppError::Config("Invalid RUST_MAX_CONNECTIONS_PER_IP value".into()))?;
+
+        let hash_salt = read_hash_salt()
+            .inspect_err(|_| {
+                info!("RUST_HASH_SALT not set, using default");
+            })
+            .unwrap_or_else(|_| "WeAreInTroubleGoodnessGracious".into());
+
         Ok(Self {
             rust_port,
             svelte_url,
             state_path,
+            max_connections_per_ip,
+            hash_salt,
         })
     }
 }
 
 fn var(key: &str) -> Result<String, AppError> {
-    std::env::var(key).map_err(|e| {
+    env::var(key).map_err(|e| {
         warn!("Environment variable {} not found, using default", key);
         AppError::Environment(e)
     })
+}
+
+fn read_hash_salt() -> Result<String, AppError> {
+    read_to_string("/run/secrets/RUST_HASH_SALT")
+        .map(|s| s.trim().to_string())
+        .map_err(|e| {
+            warn!("Failed to read RUST_HASH_SALT from file: {}", e);
+            AppError::IO(e)
+        })
 }

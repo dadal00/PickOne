@@ -1,7 +1,7 @@
 use axum::{
     extract::{
         ws::{close_code, CloseFrame, Message, WebSocket, WebSocketUpgrade},
-        State,
+        ConnectInfo, State,
     },
     http::{
         header::{HeaderMap, ORIGIN},
@@ -9,14 +9,22 @@ use axum::{
     },
     response::IntoResponse,
 };
+use dashmap::DashMap;
 use futures_util::{
     stream::{SplitSink, SplitStream},
     SinkExt, StreamExt,
 };
 use serde_json::json;
-use std::sync::{
-    atomic::Ordering::{Acquire, Relaxed},
-    Arc,
+use sha2::{Digest, Sha256};
+use std::{
+    net::{IpAddr, SocketAddr},
+    sync::{
+        atomic::{
+            AtomicUsize,
+            Ordering::{Acquire, Relaxed},
+        },
+        Arc,
+    },
 };
 use tokio::sync::{broadcast::Receiver, Mutex};
 use tracing::{debug, error, warn};
@@ -32,23 +40,64 @@ enum ClosingSignal {
     WebSocketSendErr,
 }
 
+pub type ConnectionMap = Arc<DashMap<String, Arc<AtomicUsize>>>;
+
 pub async fn websocket_handler(
     websocket: WebSocketUpgrade,
     headers: HeaderMap,
+    ConnectInfo(address): ConnectInfo<SocketAddr>,
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     if let Some(origin) = headers.get(ORIGIN) {
-        warn!("{}", origin.to_str().unwrap_or_default());
         if origin.as_bytes() != state.config.svelte_url.as_bytes() {
             return StatusCode::UNAUTHORIZED.into_response();
         }
     } else {
         return StatusCode::UNAUTHORIZED.into_response();
     }
-    websocket.on_upgrade(|socket| handle_websocket(socket, state))
+
+    let client_ip = get_client_ip(&headers, address.ip());
+    let client_hash = hash(client_ip.clone(), state.config.hash_salt.clone());
+    debug!("Client: {}", client_ip);
+
+    websocket.on_upgrade(move |socket| handle_websocket(socket, state, client_hash))
 }
 
-async fn handle_websocket(socket: WebSocket, state: Arc<AppState>) {
+fn get_client_ip(headers: &HeaderMap, direct_ip: IpAddr) -> String {
+    headers
+        .get("cf-connecting-ip")
+        .and_then(|v| v.to_str().ok())
+        .map(|s| s.to_string())
+        .or_else(|| {
+            headers
+                .get("x-forwarded-for")
+                .and_then(|v| v.to_str().ok())
+                .and_then(|s| s.split(',').next().map(|s| s.trim().to_string()))
+        })
+        .unwrap_or_else(|| direct_ip.to_string())
+}
+
+fn hash(ip: String, hash_salt: String) -> String {
+    let mut hasher = Sha256::new();
+
+    hasher.update(hash_salt.as_bytes());
+    hasher.update(ip.as_bytes());
+
+    format!("{:x}", hasher.finalize())
+}
+
+async fn handle_websocket(socket: WebSocket, state: Arc<AppState>, client_hash: String) {
+    let connection_count = &state
+        .connection_map
+        .entry(client_hash.clone())
+        .or_insert_with(|| Arc::new(AtomicUsize::new(0)))
+        .clone();
+
+    if connection_count.fetch_add(1, Relaxed) >= state.config.max_connections_per_ip.into() {
+        connection_count.fetch_sub(1, Relaxed);
+        return;
+    }
+
     state.metrics.concurrent_users.inc();
     let count = state.total_users.fetch_add(1, Relaxed);
     state.metrics.total_users.inc();
@@ -72,6 +121,9 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>) {
         Ok(()) => {}
         Err(e) => {
             error!("Sending initial state failed: {}", e);
+            if connection_count.fetch_sub(1, Relaxed) == 1 {
+                state.connection_map.remove(&client_hash);
+            }
             state.concurrent_users.fetch_sub(1, Relaxed);
             state.metrics.concurrent_users.dec();
             return;
@@ -83,6 +135,9 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>) {
         _ = handle_broadcasts(rx, handle_broadcasts_sender) => {},
     }
 
+    if connection_count.fetch_sub(1, Relaxed) == 1 {
+        state.connection_map.remove(&client_hash);
+    }
     metrics_state.metrics.concurrent_users.dec();
     debug!(
         "WebSocket connection closed. User count: {}",
