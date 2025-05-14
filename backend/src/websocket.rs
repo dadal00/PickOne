@@ -26,7 +26,10 @@ use std::{
         Arc,
     },
 };
-use tokio::sync::{broadcast::Receiver, Mutex};
+use tokio::{
+    sync::{broadcast::Receiver, Mutex},
+    time::{sleep, Duration},
+};
 use tracing::{debug, error, warn};
 
 use crate::config::MAX_BYTES;
@@ -38,6 +41,7 @@ enum ClosingSignal {
     PayloadTooLarge,
     InvalidColor,
     WebSocketSendErr,
+    Timeout,
 }
 
 pub type ConnectionMap = Arc<DashMap<String, Arc<AtomicUsize>>>;
@@ -117,6 +121,9 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>, client_hash: 
     let handle_broadcasts_sender = Arc::clone(&ws_sender_arc);
     let metrics_state = Arc::clone(&state);
 
+    let handle_timeout_sender = Arc::clone(&ws_sender_arc);
+    let timeout = &state.config.timeout;
+
     match send_initial(&count, &state, &ws_sender_arc).await {
         Ok(()) => {}
         Err(e) => {
@@ -131,6 +138,7 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>, client_hash: 
     }
 
     tokio::select! {
+        _ = handle_timeout(handle_timeout_sender, timeout) => {},
         _ = handle_messages(ws_receiver, handle_messages_sender, handle_messages_state) => {},
         _ = handle_broadcasts(rx, handle_broadcasts_sender) => {},
     }
@@ -143,6 +151,11 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>, client_hash: 
         "WebSocket connection closed. User count: {}",
         metrics_state.concurrent_users.fetch_sub(1, Relaxed) - 1
     );
+}
+
+async fn handle_timeout(ws_sender: Arc<Mutex<SplitSink<WebSocket, Message>>>, timeout: &u8) {
+    sleep(Duration::from_secs((60 * timeout).into())).await;
+    close_connection(ClosingSignal::Timeout, &ws_sender, None).await;
 }
 
 async fn handle_messages(
@@ -269,6 +282,10 @@ async fn close_connection(
         ClosingSignal::PayloadTooLarge => {
             error!("Payload abnormal: larger than max bytes");
             "Abnormal Payload"
+        }
+        ClosingSignal::Timeout => {
+            debug!("Connection expired");
+            "Connection expired"
         }
         ClosingSignal::InvalidColor => {
             error!(

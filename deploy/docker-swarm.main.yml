@@ -27,6 +27,7 @@ services:
       - SVELTE_URL=${SVELTE_URL}
       - RUST_STATE_PATH=${RUST_STATE_PATH}
       - RUST_MAX_CONNECTIONS_PER_IP=${RUST_MAX_CONNECTIONS_PER_IP}
+      - RUST_TIMEOUT=${RUST_TIMEOUT}
 
   svelte:
     image: counter_svelte:latest

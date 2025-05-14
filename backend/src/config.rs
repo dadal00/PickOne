@@ -11,6 +11,7 @@ pub struct Config {
     pub state_path: String,
     pub max_connections_per_ip: u8,
     pub hash_salt: String,
+    pub timeout: u8,
 }
 
 impl Config {
@@ -49,12 +50,21 @@ impl Config {
             })
             .unwrap_or_else(|_| "WeAreInTroubleGoodnessGracious".into());
 
+        let timeout = var("RUST_TIMEOUT")
+            .inspect_err(|_| {
+                info!("RUST_TIMEOUT not set, using default");
+            })
+            .unwrap_or_else(|_| "5".into())
+            .parse()
+            .map_err(|_| AppError::Config("Invalid RUST_TIMEOUT value".into()))?;
+
         Ok(Self {
             rust_port,
             svelte_url,
             state_path,
             max_connections_per_ip,
             hash_salt,
+            timeout,
         })
     }
 }
