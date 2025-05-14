@@ -28,7 +28,7 @@ use std::{
 };
 use tokio::{
     sync::{broadcast::Receiver, Mutex},
-    time::{sleep, Duration},
+    time::{sleep, Duration, Instant},
 };
 use tracing::{debug, error, warn};
 
@@ -122,7 +122,7 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>, client_hash: 
     let metrics_state = Arc::clone(&state);
 
     let handle_timeout_sender = Arc::clone(&ws_sender_arc);
-    let timeout = &state.config.timeout;
+    let timeout_min = &state.config.timeout_min;
 
     match send_initial(&count, &state, &ws_sender_arc).await {
         Ok(()) => {}
@@ -138,7 +138,7 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>, client_hash: 
     }
 
     tokio::select! {
-        _ = handle_timeout(handle_timeout_sender, timeout) => {},
+        _ = handle_timeout(handle_timeout_sender, timeout_min) => {},
         _ = handle_messages(ws_receiver, handle_messages_sender, handle_messages_state) => {},
         _ = handle_broadcasts(rx, handle_broadcasts_sender) => {},
     }
@@ -153,8 +153,8 @@ async fn handle_websocket(socket: WebSocket, state: Arc<AppState>, client_hash: 
     );
 }
 
-async fn handle_timeout(ws_sender: Arc<Mutex<SplitSink<WebSocket, Message>>>, timeout: &u8) {
-    sleep(Duration::from_secs((60 * timeout).into())).await;
+async fn handle_timeout(ws_sender: Arc<Mutex<SplitSink<WebSocket, Message>>>, timeout_min: &u8) {
+    sleep(Duration::from_secs((60 * timeout_min).into())).await;
     close_connection(ClosingSignal::Timeout, &ws_sender, None).await;
 }
 
@@ -163,7 +163,15 @@ async fn handle_messages(
     ws_sender: Arc<Mutex<SplitSink<WebSocket, Message>>>,
     state: Arc<AppState>,
 ) {
+    let mut last_msg = Instant::now();
     while let Some(result) = ws_receiver.next().await {
+        if Instant::now().duration_since(last_msg)
+            < Duration::from_millis(state.config.msg_delay_ms.into())
+        {
+            debug!("Rate limit exceeded");
+            continue;
+        }
+        last_msg = Instant::now();
         match result {
             Ok(Message::Text(message)) => {
                 if message.len() > MAX_BYTES.into() {

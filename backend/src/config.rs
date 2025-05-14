@@ -11,7 +11,8 @@ pub struct Config {
     pub state_path: String,
     pub max_connections_per_ip: u8,
     pub hash_salt: String,
-    pub timeout: u8,
+    pub timeout_min: u8,
+    pub msg_delay_ms: u8,
 }
 
 impl Config {
@@ -50,13 +51,21 @@ impl Config {
             })
             .unwrap_or_else(|_| "WeAreInTroubleGoodnessGracious".into());
 
-        let timeout = var("RUST_TIMEOUT")
+        let timeout_min = var("RUST_TIMEOUT_MIN")
             .inspect_err(|_| {
-                info!("RUST_TIMEOUT not set, using default");
+                info!("RUST_TIMEOUT_MIN not set, using default");
             })
             .unwrap_or_else(|_| "5".into())
             .parse()
-            .map_err(|_| AppError::Config("Invalid RUST_TIMEOUT value".into()))?;
+            .map_err(|_| AppError::Config("Invalid RUST_TIMEOUT_MIN value".into()))?;
+
+        let msg_delay_ms = var("RUST_MSG_DELAY_MS")
+            .inspect_err(|_| {
+                info!("RUST_MSG_DELAY_MS not set, using default");
+            })
+            .unwrap_or_else(|_| "100".into())
+            .parse()
+            .map_err(|_| AppError::Config("Invalid RUST_MSG_DELAY_MS value".into()))?;
 
         Ok(Self {
             rust_port,
@@ -64,7 +73,8 @@ impl Config {
             state_path,
             max_connections_per_ip,
             hash_salt,
-            timeout,
+            timeout_min,
+            msg_delay_ms,
         })
     }
 }
