@@ -1,0 +1,20 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    networks:
+      - cloud_net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    command: tunnel run --token-file /run/secrets/CLOUDFLARE_TUNNEL_TOKEN
+    secrets:
+      - CLOUDFLARE_TUNNEL_TOKEN
+
+secrets:
+  CLOUDFLARE_TUNNEL_TOKEN:
+    external: true
+
+networks:
+  cloud_net:
+    driver: overlay
+    name: cloud_net
