@@ -45,7 +45,6 @@ services:
 
   caddy:
     image: counter_caddy:latest
-    # image: caddy:2.9.1-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
     networks:
       - main_net
       - cloud_net
@@ -83,10 +82,23 @@ services:
       - ./caddy/logs:/var/log/caddy
       - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    networks:
+      - cloud_net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    command: tunnel run --token-file /run/secrets/CLOUDFLARE_TUNNEL_TOKEN
+    secrets:
+      - CLOUDFLARE_TUNNEL_TOKEN
+
 secrets:
   RUST_HASH_SALT:
     external: true
   CLOUDFLARE_ZONE_TOKEN:
+    external: true
+  CLOUDFLARE_TUNNEL_TOKEN:
     external: true
 
 networks:
@@ -97,5 +109,5 @@ networks:
     external: true
     name: monitor_net
   cloud_net:
-    external: true
+    driver: overlay
     name: cloud_net
