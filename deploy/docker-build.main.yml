@@ -11,3 +11,8 @@ services:
         - PUBLIC_WS_URL=${PUBLIC_WS_URL}
       context: ../frontend
     image: counter_svelte:latest
+
+  counter_caddy:
+    build:
+      context: ./caddy
+    image: counter_caddy:latest

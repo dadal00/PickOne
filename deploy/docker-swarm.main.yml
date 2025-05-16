@@ -44,9 +44,10 @@ services:
       - NODE_ENV=${NODE_ENV}
 
   caddy:
-    image: caddy:2.9.1-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+    image: counter_caddy:latest
     networks:
       - main_net
+      - cloud_net
     ports:
       - "80:80"
       - "443:443"
@@ -64,6 +65,8 @@ services:
         loki-batch-size: "10"
         loki-timeout: "10s"
         loki-retries: "3"
+    secrets:
+      - CLOUDFLARE_ZONE_TOKEN
     environment:
       - CADDY_LOG_ROTATE_DAYS=356
       - CADDY_LOG_ROTATE_SIZE=10000
@@ -72,19 +75,39 @@ services:
       - RUST_PORT=${RUST_PORT}
       - SVELTE_NAME=${SVELTE_NAME}
       - SVELTE_PORT=${SVELTE_PORT}
+    command: sh -c "export CLOUDFLARE_ZONE_TOKEN=$$(cat /run/secrets/CLOUDFLARE_ZONE_TOKEN) && caddy run --config /etc/caddy/Caddyfile"
     volumes:
-      - ./caddy_data:/data
-      - ./caddy_config:/config
-      - ./caddy_logs:/var/log/caddy
-      - ./caddy_config/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+      - ./caddy/logs:/var/log/caddy
+      - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
+
+  cloudflared:
+    image: cloudflare/cloudflared:2025.5.0@sha256:f9d5c5b94cd7337c0c939a6dbf5537db34030828c243fca6b589fd85ab25d43b
+    networks:
+      - cloud_net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    command: tunnel run --token-file /run/secrets/CLOUDFLARE_TUNNEL_TOKEN
+    secrets:
+      - CLOUDFLARE_TUNNEL_TOKEN
 
 secrets:
   RUST_HASH_SALT:
+    external: true
+  CLOUDFLARE_ZONE_TOKEN:
+    external: true
+  CLOUDFLARE_TUNNEL_TOKEN:
     external: true
 
 networks:
   main_net:
     driver: overlay
+    name: main_net
   monitor_net:
     external: true
     name: monitor_net
+  cloud_net:
+    driver: overlay
+    name: cloud_net
