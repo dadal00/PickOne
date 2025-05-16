@@ -213,7 +213,6 @@
   })
 
   $effect(() => {
-    // console.log($connected)
     if ($visibility && !$connected) {
       websocket.attemptReconnect()
     }
