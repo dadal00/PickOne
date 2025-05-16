@@ -1,4 +1,4 @@
-FROM node:23-alpine AS builder
+FROM node:23-alpine@sha256:139be64e98a1374a1c49ee62b23a91f688a37a628422ff8bb9fba94185678ab3 AS builder
 
 ARG PUBLIC_BACKEND_URL
 ARG PUBLIC_WS_URL
@@ -17,7 +17,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:23-alpine
+FROM node:23-alpine@sha256:139be64e98a1374a1c49ee62b23a91f688a37a628422ff8bb9fba94185678ab3
 
 WORKDIR /app
 
