@@ -18,6 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -55,9 +56,10 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "max"
           ],
           "fields": "",
           "values": false
@@ -66,7 +68,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.1",
+      "pluginVersion": "11.3.5",
       "targets": [
         {
           "datasource": {
@@ -155,6 +157,7 @@
         "y": 0
       },
       "id": 4,
+      "interval": "30m",
       "options": {
         "colWidth": 0.9,
         "legend": {
@@ -169,7 +172,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "10.4.1",
+      "pluginVersion": "11.3.5",
       "targets": [
         {
           "datasource": {
@@ -210,6 +213,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -269,6 +273,7 @@
         "y": 4
       },
       "id": 3,
+      "interval": "30m",
       "options": {
         "legend": {
           "calcs": [],
@@ -281,6 +286,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.5",
       "targets": [
         {
           "datasource": {
@@ -321,6 +327,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -380,6 +387,7 @@
         "y": 4
       },
       "id": 2,
+      "interval": "30m",
       "options": {
         "legend": {
           "calcs": [],
@@ -392,6 +400,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.5",
       "targets": [
         {
           "datasource": {
@@ -431,6 +440,7 @@
             "axisLabel": "",
             "axisPlacement": "left",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 6,
             "gradientMode": "none",
@@ -538,7 +548,7 @@
         "y": 11
       },
       "id": 1,
-      "interval": "15",
+      "interval": "30m",
       "options": {
         "legend": {
           "calcs": [],
@@ -551,6 +561,7 @@
           "sort": "desc"
         }
       },
+      "pluginVersion": "11.3.5",
       "targets": [
         {
           "datasource": {
@@ -576,8 +587,9 @@
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "30s",
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": []
