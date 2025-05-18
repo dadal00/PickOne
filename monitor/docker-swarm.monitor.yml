@@ -16,17 +16,6 @@ services:
       mode: replicated
       replicas: 1
 
-  loki:
-    image: grafana/loki:3.4.3@sha256:5fe9fa99e9a747297cdf0239a5b25d192d8f668bd6505b09beef4dffcab5aac2
-    networks:
-      - monitor_net
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./loki_config.yml:/etc/loki/loki_config.yml
-      - ./loki_data:/loki_data
-    command: -config.file=/etc/loki/loki_config.yml
-
   prometheus:
     image: prom/prometheus:v3.2.1@sha256:6927e0919a144aa7616fd0137d4816816d42f6b816de3af269ab065250859a62
     networks:
@@ -44,31 +33,7 @@ services:
       placement:
         constraints: [node.role == manager]
 
-  goaccess:
-    image: allinurl/goaccess:1.9.4@sha256:9f8273d6b46fcbb7cb9334a7e8d20a6167ec570080f62731e7b2cb45803b8a2f
-    volumes:
-      - ../deploy/caddy/logs:/var/log/caddy
-      - ./goaccess/www/report.html:/www/report.html
-      - ./goaccess/mmdb:/mmdb
-    ports:
-      - "7890:7890"
-    command:
-      [
-        "--log-file=/var/log/caddy/access.log",
-        "-o",
-        "/www/report.html",
-        "--real-time-html",
-        "--port=7890",
-        "--geoip-database=/mmdb/GeoLite2-City.mmdb",
-        "--geoip-database=/mmdb/GeoLite2-Country.mmdb",
-        "--keep-last=356",
-        "--no-global-config",
-        "--log-format=CADDY",
-      ]
-
 networks:
   monitor_net:
-    driver: overlay
-    attachable: true
-    internal: true
+    external: true
     name: monitor_net
