@@ -157,7 +157,7 @@
         "y": 0
       },
       "id": 4,
-      "interval": "30m",
+      "interval": "5m",
       "options": {
         "colWidth": 0.9,
         "legend": {
@@ -273,7 +273,7 @@
         "y": 4
       },
       "id": 3,
-      "interval": "30m",
+      "interval": "5m",
       "options": {
         "legend": {
           "calcs": [],
@@ -387,7 +387,7 @@
         "y": 4
       },
       "id": 2,
-      "interval": "30m",
+      "interval": "5m",
       "options": {
         "legend": {
           "calcs": [],
@@ -409,7 +409,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "concurrent_users{job=\"pickone-metrics\"}",
+          "expr": "concurrent_users{instance=\"rust:3000\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -452,7 +452,7 @@
             "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 2,
-            "pointSize": 1,
+            "pointSize": 7,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -548,7 +548,7 @@
         "y": 11
       },
       "id": 1,
-      "interval": "30m",
+      "interval": "5m",
       "options": {
         "legend": {
           "calcs": [],
@@ -588,20 +588,20 @@
     }
   ],
   "preload": false,
-  "refresh": "30s",
+  "refresh": "30m",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Real Time Voting",
   "uid": "beii4n8hhn5dsd",
-  "version": 2,
+  "version": 7,
   "weekStart": ""
 }
