@@ -9,6 +9,9 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      placement:
+        constraints:
+          - node.labels.role == main_app
     volumes:
       - ./saved_state.json:${RUST_STATE_PATH}
     secrets:
@@ -39,6 +42,9 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      placement:
+        constraints:
+          - node.labels.role == main_app
     environment:
       - PORT=${SVELTE_PORT}
       - NODE_ENV=${NODE_ENV}
@@ -52,7 +58,8 @@ services:
       - "443:443"
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.labels.role == main_app
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -87,7 +94,8 @@ services:
       - main_net
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.labels.role == main_app
     command: tunnel run --token-file /run/secrets/CLOUDFLARE_TUNNEL_TOKEN
     secrets:
       - CLOUDFLARE_TUNNEL_TOKEN
@@ -102,9 +110,17 @@ services:
       - ../monitor/loki_config.yml:/etc/loki/loki_config.yml
       - ../monitor/loki_data:/loki_data
     command: -config.file=/etc/loki/loki_config.yml
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == main_app
 
   goaccess:
     image: allinurl/goaccess:1.9.4@sha256:9f8273d6b46fcbb7cb9334a7e8d20a6167ec570080f62731e7b2cb45803b8a2f
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == main_app
     volumes:
       - ./caddy/logs:/var/log/caddy
       - ../monitor/goaccess/www/report.html:/www/report.html
