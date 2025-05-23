@@ -1,13 +1,13 @@
 import { get, writable } from 'svelte/store'
 import { PUBLIC_WS_URL } from '$env/static/public'
 import { visibility } from './visibility'
+import { type WebSocketState } from '../models' 
 
-const MSG_KEYS = new Set(['red', 'green', 'blue', 'purple', 'total'])
-
+const MAX_RECONNECT_DELAY = 5000
 export const connected = writable<boolean>(false)
 
 export const websocket = (() => {
-  const { subscribe, set, update } = writable({
+  const { subscribe, update } = writable<WebSocketState>({
     total: 0,
     total_users: 0,
     red: 0,
@@ -16,9 +16,8 @@ export const websocket = (() => {
     purple: 0,
   })
 
-  let socket: WebSocket
-  let reconnectTimer: any
-  const MAX_RECONNECT_DELAY = 5000
+  let socket: WebSocket | null = null
+  let reconnectTimer: NodeJS.Timeout | null = null
 
   const connect = () => {
     if (socket?.readyState === WebSocket.OPEN) return
@@ -30,35 +29,14 @@ export const websocket = (() => {
       socket.onmessage = (event) => {
         const msg = JSON.parse(event.data)
 
-        if (msg.type == undefined) {
-          update((currentData) => ({
-            ...currentData,
-            ...Object.entries(msg).reduce((acc, [key, value]) => {
-              if (MSG_KEYS.has(key)) {
-                acc[key] = value
-              }
-              return acc
-            }, {}),
-          }))
-        } else if (msg.type === 'initial') {
-          update((currentData) => ({
-            ...currentData,
-            ...(msg.count !== undefined && { total_users: msg.count }),
-            ...(msg.total !== undefined && { total: msg.total }),
-            ...(msg.red !== undefined && { red: msg.red }),
-            ...(msg.green !== undefined && { green: msg.green }),
-            ...(msg.blue !== undefined && { blue: msg.blue }),
-            ...(msg.purple !== undefined && { purple: msg.purple }),
-          }))
-        } else if (msg.type === 'users') {
-          update((currentData) => ({
-            ...currentData,
-            ...(msg.count !== undefined && { total_users: msg.count }),
-          }))
-        }
+        update((currentData) => ({
+          ...currentData,
+          ...msg
+        }))
       }
     } catch (e) {
       console.error('Network parse error:', e)
+      return
     }
 
     socket.onopen = () => {
@@ -113,7 +91,6 @@ export const websocket = (() => {
 
   return {
     subscribe,
-    set,
     connect,
     sendPayload,
     disconnect,

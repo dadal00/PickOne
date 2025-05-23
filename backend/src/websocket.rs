@@ -325,15 +325,13 @@ async fn send_initial(
     ws_sender: &Arc<Mutex<SplitSink<WebSocket, Message>>>,
 ) -> Result<(), AppError> {
     let message = json!({
-        "type": "users",
-        "count": count,
+        "total_users": count,
     });
     let json = serde_json::to_string(&message)?;
     state.broadcast_tx.send(json)?;
 
     let initial = json!({
-        "type": "initial",
-        "count": count,
+        "total_users": count,
         "red": state.counters.red.load(Acquire),
         "green": state.counters.green.load(Acquire),
         "blue": state.counters.blue.load(Acquire),
