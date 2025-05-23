@@ -1,16 +1,18 @@
-<script>
+<script lang="ts">
+  import { Color, type ColorValue, type ClickAnimations } from '$lib/models'
   import { websocket } from '$lib/stores/websocket'
+  import { colorConfigs } from '$lib/config'
 
-  export let color
-  export let text
+  const { color } = $props<{ color: Color }>()
+  const colorConfig: ColorValue = colorConfigs[color as Color]
 
-  let animations = []
-  let container
+  let animations = $state<ClickAnimations>([])
+  let container: HTMLDivElement | null = null
 
-  const handleClick = (event) => {
-    websocket.sendPayload(color)
+  const handleClick = (event: MouseEvent) => {
+    websocket.sendPayload(color as Color)
 
-    const rect = container.getBoundingClientRect()
+    const rect = container!.getBoundingClientRect()
     const id = Date.now()
 
     animations = [
@@ -25,22 +27,6 @@
 </script>
 
 <style>
-  .red-button {
-    background-color: #d95b5b;
-  }
-
-  .blue-button {
-    background-color: #5b98d9;
-  }
-
-  .green-button {
-    background-color: #6cd859;
-  }
-
-  .purple-button {
-    background-color: #d064dd;
-  }
-
   .button-container {
     position: relative;
     width: 13.4vw;
@@ -168,21 +154,21 @@
 <div
   class="button-container"
   bind:this={container}
-  on:click={handleClick}
+  onclick={handleClick}
   role="button"
   tabindex="0"
-  aria-label="{color} button"
+  aria-label="{colorConfig['label']} button"
 >
-  <div class="button-background {color}-button"></div>
-  <button class="{color}-button" aria-label="{color} button">
-    {text}
+  <div class="button-background" style="background-color: {colorConfig['hex']}"></div>
+  <button style="background-color: {colorConfig['hex']}" aria-label="{colorConfig['label']} button">
+    {colorConfig['label']}
   </button>
 
   {#each animations as animation (animation.id)}
     <span
       class="click-animation"
       style="left: {animation.x}px; top: {animation.y}px;"
-      on:animationend={() => (animations = animations.filter((a) => a.id !== animation.id))}
+      onanimationend={() => (animations = animations.filter((a) => a.id !== animation.id))}
     >
       +1
     </span>

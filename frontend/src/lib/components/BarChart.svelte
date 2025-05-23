@@ -1,27 +1,29 @@
-<script>
+<script lang="ts">
   import * as d3 from 'd3'
   import { onMount, onDestroy } from 'svelte'
   import { websocket, connected } from '$lib/stores/websocket'
   import VisibilityChange from 'svelte-visibility-change'
   import { visibility } from '$lib/stores/visibility'
+  import { Color, type ChartData } from '$lib/models'
+  import { colorConfigs } from '$lib/config'
 
-  const { labels } = $props()
   const data = $derived(
     Object.entries($websocket)
       .filter(([key]) => key !== 'total' && key != 'total_users')
-      .map(([color, count]) => ({ color, count }))
+      .map(([color, count]): ChartData => ({ color: color as Color, count }))
+      .sort((a, b) => b.count - a.count)
   )
 
-  let width = 1000
-  let height = 625
-  let delay = 200
-  let svg
-  let container
-  let resizeObserver
-  let outer_padding = 0.01
-  let minBarWidth = 200
-  let mobile = $state(false)
-  let mobile_changed = $state(false)
+  let svg: d3.Selection<SVGSVGElement, unknown, null, undefined> = null
+  let container: HTMLDivElement | null = null
+  let resizeObserver: ResizeObserver | null = null
+  let mobile: boolean = $state(false)
+  let mobile_changed: boolean = $state(false)
+  let width: number = 1000
+  let height: number = 625
+  let delay: number = 200
+  let outer_padding: number = 0.01
+  let minBarWidth: number = 200
 
   function calculateDimensions() {
     if (!container) return
@@ -79,14 +81,7 @@
     }
   }
 
-  const colors = {
-    red: '#d95b5b',
-    green: '#6cd859',
-    blue: '#5b98d9',
-    purple: '#d064dd',
-  }
-
-  function format_number(num) {
+  function format_number(num: number) {
     if (num >= 1_000_000_000) {
       return (num / 1_000_000_000).toFixed(1) + 'B'
     } else if (num >= 1_000_000) {
@@ -109,11 +104,9 @@
   function update_chart() {
     if (!svg || !$visibility) return
 
-    data.sort((a, b) => b.count - a.count)
-
     const xScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.count) * 1.1])
+      .domain([0, d3.max(data, (d: ChartData) => d.count) * 1.1])
       .range([0, width])
 
     const yScale = d3
@@ -123,7 +116,7 @@
       .paddingInner(0.35)
       .paddingOuter(outer_padding)
 
-    const bars = svg.selectAll('.bar').data(data, (d) => d.color)
+    const bars = svg.selectAll('.bar').data(data, (d: ChartData) => d.color)
 
     bars.exit().transition().duration(delay).attr('width', 0).remove()
 
@@ -131,13 +124,13 @@
       .enter()
       .append('g')
       .attr('class', 'bar')
-      .attr('transform', (d) => `translate(0,${yScale(d.color)})`)
+      .attr('transform', (d: ChartData) => `translate(0,${yScale(d.color)})`)
       .attr('opacity', 0)
 
     newBars
       .append('rect')
       .attr('height', yScale.bandwidth())
-      .attr('fill', (d) => `${colors[d.color]}`)
+      .attr('fill', (d: ChartData) => `${colorConfigs[d.color]['hex']}`)
       .attr('stroke', '#5e5757')
       .attr('stroke-width', '2')
       .attr('rx', 11)
@@ -164,24 +157,24 @@
     merged
       .transition()
       .duration(delay)
-      .attr('transform', (d) => `translate(1,${yScale(d.color)})`)
+      .attr('transform', (d: ChartData) => `translate(1,${yScale(d.color)})`)
       .attr('opacity', 1)
 
     merged
       .select('rect')
       .transition()
       .duration(delay)
-      .attr('width', (d) => Math.max(minBarWidth, xScale(d.count)))
+      .attr('width', (d: ChartData) => Math.max(minBarWidth, xScale(d.count)))
       .attr('height', yScale.bandwidth())
 
     merged
       .select('.value-label')
       .transition()
       .duration(delay)
-      .attr('x', mobile ? 20 : (d) => Math.max(minBarWidth, xScale(d.count)) - 20)
+      .attr('x', mobile ? 20 : (d: ChartData) => Math.max(minBarWidth, xScale(d.count)) - 20)
       .attr('y', mobile ? yScale.bandwidth() / 2 + 20 : yScale.bandwidth() / 2)
       .attr('dy', '0.35em')
-      .text((d) => format_number(d.count))
+      .text((d: ChartData) => format_number(d.count))
 
     merged
       .select('.name-label')
@@ -190,7 +183,7 @@
       .attr('x', 20)
       .attr('y', mobile ? yScale.bandwidth() / 2 - 20 : yScale.bandwidth() / 2)
       .attr('dy', '0.35em')
-      .text((d) => labels[d.color])
+      .text((d: ChartData) => colorConfigs[d.color]['label'])
   }
 
   onMount(() => {
@@ -246,5 +239,5 @@
 
 <VisibilityChange on:visible={() => visibility.set(true)} on:hidden={() => visibility.set(false)} />
 <div class="chart-container" bind:this={container}>
-  <div id="chart"></div>
+  <div id="chart" aria-label="Live Voting Chart"></div>
 </div>

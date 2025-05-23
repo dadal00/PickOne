@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { websocket } from '$lib/stores/websocket'
 </script>
 
@@ -9,7 +9,6 @@
     height: 13%;
     display: flex;
     justify-content: center;
-    /* background-color: pink; */
     flex-direction: column;
   }
   .total-votes {
@@ -29,7 +28,7 @@
   }
   @media screen and (max-height: 600px) {
     .total-users {
-      margin-top: 10vh; /* adjust as needed */
+      margin-top: 10vh;
     }
   }
 </style>
