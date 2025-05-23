@@ -13,8 +13,6 @@ Built with Rust, Svelte, Docker, and Figma
 
 InProgress:
 
-- Documentation
+- README overhaul
 
 ToDo:
-
-- Deployment Server Setup
