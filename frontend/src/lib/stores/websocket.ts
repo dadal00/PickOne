@@ -1,7 +1,7 @@
 import { get, writable } from 'svelte/store'
 import { PUBLIC_WS_URL } from '$env/static/public'
 import { visibility } from './visibility'
-import { type WebSocketState } from '../models' 
+import { type WebSocketState } from '../models'
 
 const MAX_RECONNECT_DELAY = 5000
 export const connected = writable<boolean>(false)
@@ -31,7 +31,7 @@ export const websocket = (() => {
 
         update((currentData) => ({
           ...currentData,
-          ...msg
+          ...msg,
         }))
       }
     } catch (e) {
