@@ -65,7 +65,9 @@ Devops using Grafana (GUI, Dashboards, Loki Logging), Prometheus (Metrics, Uptim
 ## Additional Demos
 
 <img src="demos/badge/goaccess.png" width="100" height="24" />
-<img src="demos/goaccess.gif" width=600>
+<img src="demos/goaccess.png" width=600>
+<img src="demos/goaccess_2.png" width=600>
+<img src="demos/goaccess_3.png" width=600>
 
 <p>
    <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" height="24" />
