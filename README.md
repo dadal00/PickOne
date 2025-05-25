@@ -130,6 +130,7 @@ Before running this project locally, make sure you have the following installed:
    ```bash
    touch deploy/caddy/logs/access.log
    touch deploy/saved_state.json
+   touch monitor/goaccess/www/report.html
    ```
 
 8. **Deploy the monitoring stack**
@@ -143,3 +144,10 @@ Before running this project locally, make sure you have the following installed:
    ```bash
    docker stack deploy -c deploy/docker-swarm.main.local.yml counter
    ```
+
+10. **Visit the local dashboards:**
+
+- [Local PickOne](https://pickone/)
+- [Local Grafana](http://localhost:3000/)
+- GoAccess Report: Paste absolute path of `monitor/goaccess/www/report.html` into browser to view live
+  - Example Absolute Path: `/Users/dadal00/Documents/PickOne/monitor/goaccess/www/report.html`
