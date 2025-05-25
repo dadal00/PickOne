@@ -53,9 +53,11 @@ Backend using Rust
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](#)  
 Frontend using Typescript for Svelte
 
-<img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" style="border-radius: 4px;" height="24" />
-<img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" alt="Prometheus" style="border-radius: 4px;" height="24" />
-<img src="demos/badge/goaccess.png" width="100" style="border-radius: 4px;" height="24" />
+<p>
+   <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" style="border-radius: 4px;" height="24" />
+   <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" alt="Prometheus" style="border-radius: 4px;" height="24" />
+   <img src="demos/badge/goaccess.png" width="100" style="border-radius: 4px;" height="24" />
+</p>
 
 Devops using Grafana (GUI, Dashboards, Loki Logging), Prometheus (Metrics, Uptime), GoAccess (Web Stats)
 
