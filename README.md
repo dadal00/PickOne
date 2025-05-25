@@ -64,7 +64,7 @@ Devops using Grafana (GUI, Dashboards, Loki Logging), Prometheus (Metrics, Uptim
 ## Additional Demos
 
 [<img src="demos/badge/goaccess.png" width="100" height="21" alt="GoAccess"/>](https://goaccess.io/)  
-Screenshots showing examples statistics provided by GoAccess including overview stats, unique visitors, and requested links.
+Screenshots showing examples statistics provided by GoAccess including overview stats, unique visitors, and requested links.  
 <img src="demos/goaccess.png" width=600 alt="GoAccess overview of stats">
 <img src="demos/goaccess_2.png" width=600 alt="GoAccess unique visitors over time">
 <img src="demos/goaccess_3.png" width=600 alt="GoAccess requested links">
@@ -147,7 +147,7 @@ Before running this project locally, make sure you have the following installed:
    docker stack deploy -c deploy/docker-swarm.main.local.yml counter
    ```
 
-10. **Visit the local websites:**
+10. **Visit the local websites**
 
 - [Local PickOne](https://pickone/)
 - [Local Grafana](http://localhost:3000/)
