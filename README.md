@@ -17,6 +17,9 @@ PickOne is a real-time voting system.
 
 - [Features](#features)
 - [Built With](#built-with)
+  - [Technologies](#technologies)
+  - [Architectural Diagram](#architecture-diagram)
+  - [Architecture Explanation](#architecture-explanation)
 - [Additional Demos](#additional-demos)
 - [Getting Started](#getting-started)
 
@@ -42,6 +45,8 @@ PickOne is a real-time voting system.
 
 ## Built With
 
+### Technologies
+
 [![Debian](https://img.shields.io/badge/Debian-A81D33?logo=debian&logoColor=fff)](https://www.debian.org/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](https://www.docker.com/)  
 Deployed on multiple Debian nodes using Docker Swarm
@@ -60,6 +65,19 @@ Frontend using [Figma](https://www.figma.com/design/3TCMv4E68enOcQ3quqRtO4/picko
 
 [<img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" height="21" />](https://grafana.com/) [<img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" alt="Prometheus" height="21" />](https://prometheus.io/) [<img src="demos/badge/goaccess.png" width="100" height="21" alt="GoAccess"/>](https://goaccess.io/)  
 Devops using Grafana (GUI, Dashboards, Loki Logging), Prometheus (Metrics, Uptime), GoAccess (Web Stats)
+
+### Architecture Diagram
+
+[<img src="demos/diagram/architecture.png" width="350" alt="GoAccess"/>](https://www.figma.com/design/3TCMv4E68enOcQ3quqRtO4/pickone?node-id=0-1&t=GrwhKBXnhd69lmop-1)[<img src="demos/diagram/legend.png" width="200" alt="GoAccess"/>](https://www.figma.com/design/3TCMv4E68enOcQ3quqRtO4/pickone?node-id=0-1&t=GrwhKBXnhd69lmop-1)  
+This diagram visualizes the architecture of the software stack. Using the legend, the green arrows represent network flow for the user and the blue arrows represent network flow for internal operations including processing the votes, metrics, and logs.
+
+The diagram is also available through [Figma](https://www.figma.com/design/3TCMv4E68enOcQ3quqRtO4/pickone?node-id=0-1&t=GrwhKBXnhd69lmop-1).
+
+### Architecture Explanation
+
+The user first arrives at our domain of https://pickone.cc. From the domain, Cloudflare tunnels the user into our Docker machine directly to Caddy. Caddy then reverse proxies the user to the website hosted by Svelte. At this point, Svelte will go through Caddy to communicate with Rust in order to start a new websocket connection and process votes. Rust communicates back similarly through the Caddy reverse proxy.
+
+As for the Devops, Caddy sends the request logs to be processed internally by GoAccess. In addition, all logs and metrics are sent to the other Docker node for Prometheus and Grafana to process, finally to be presented in a GUI hosted by Grafana.
 
 ## Additional Demos
 
