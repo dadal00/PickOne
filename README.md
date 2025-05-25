@@ -44,7 +44,7 @@ PickOne is a real-time voting system.
 
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
 [![Debian](https://img.shields.io/badge/Debian-A81D33?logo=debian&logoColor=fff)](#)  
-Deployed on multiple Debian nodes with Docker Swarm
+Deployed on multiple Debian nodes using Docker Swarm
 
 [![Rust](https://img.shields.io/badge/Rust-%23000000.svg?e&logo=rust&logoColor=white)](#)  
 Backend using Rust
