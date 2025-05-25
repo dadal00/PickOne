@@ -47,7 +47,7 @@ PickOne is a real-time voting system.
 Deployed on multiple Debian nodes using Docker Swarm
 
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?logo=Cloudflare&logoColor=white)](https://www.cloudflare.com/)
-<img src="demos/badge/caddy.png" alt="Caddy" height="24" />  
+<img src="demos/badge/caddy.png" alt="Caddy" height="21" />  
 Hosted using reverse proxy by Caddy and Cloudflare
 
 [![Rust](https://img.shields.io/badge/Rust-%23000000.svg?e&logo=rust&logoColor=white)](https://www.rust-lang.org/)  
@@ -59,9 +59,9 @@ Backend using Rust
 Frontend using [Figma](https://www.figma.com/design/3TCMv4E68enOcQ3quqRtO4/pickone?node-id=0-1&t=GrwhKBXnhd69lmop-1) and Typescript for Svelte
 
 <p>
-   <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" height="24" />
-   <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" alt="Prometheus" height="24" />
-   <img src="demos/badge/goaccess.png" width="100" height="24" alt="GoAccess"/>
+   <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" height="21" />
+   <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" alt="Prometheus" height="21" />
+   <img src="demos/badge/goaccess.png" width="100" height="21" alt="GoAccess"/>
 </p>
 Devops using Grafana (GUI, Dashboards, Loki Logging), Prometheus (Metrics, Uptime), GoAccess (Web Stats)
 
