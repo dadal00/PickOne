@@ -1,18 +1,135 @@
-Real Time Voting System
+# PickOne: Real Time Voting System
 
-![Kapture 2025-04-02 at 16 24 48](https://github.com/user-attachments/assets/272699fe-cb1c-4ed8-a3bf-99253d3a283f)
+## Overview
 
-[PickOne Deployed](https://pickone.cc/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
+[![Rust](https://img.shields.io/badge/Rust-%23000000.svg?e&logo=rust&logoColor=white)](#)
+[![Svelte](https://img.shields.io/badge/Svelte-%23f1413d.svg?logo=svelte&logoColor=white)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](#)
 
-Features
+PickOne is a real-time voting system.
 
-- Concurrent Users
-- Real Time Updates
+**Try it live:** [pickone.cc](https://pickone.cc/)
 
-Built with Rust, Svelte, Docker, and Figma
+<img src="demos/live.gif" width=600>
 
-InProgress:
+## Table of Contents
 
-- README overhaul
+- [Features](#features)
+- [Built With](#built-with)
+- [Additional Demos](#additional-demos)
+- [Getting Started](#getting-started)
 
-ToDo:
+## Features
+
+### Real Time
+
+- Concurent Users
+- Live Broadcasts to All
+
+### Frontend
+
+- Live Bar Chart
+- Click Animations
+- Button Animations
+- Mobile Resolutions
+
+### Websockets
+
+- Timeouts
+- Automatic Reconnection
+- Sanitzation of Messages
+
+## Built With
+
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
+[![Debian](https://img.shields.io/badge/Debian-A81D33?logo=debian&logoColor=fff)](#)  
+Deployed on multiple Debian nodes with Docker Swarm
+
+[![Rust](https://img.shields.io/badge/Rust-%23000000.svg?e&logo=rust&logoColor=white)](#)  
+Backend using Rust
+
+[![Svelte](https://img.shields.io/badge/Svelte-%23f1413d.svg?logo=svelte&logoColor=white)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](#)  
+Frontend using Typescript for Svelte
+
+<img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" style="border-radius: 4px;" height="24" />
+<img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" alt="Prometheus" style="border-radius: 4px;" height="24" />
+<img src="demos/badge/goaccess.png" width="100" style="border-radius: 4px;" height="24" />
+
+Devops using Grafana (GUI, Dashboards, Loki Logging), Prometheus (Metrics, Uptime), GoAccess (Web Stats)
+
+## Additional Demos
+
+<img src="demos/badge/goaccess.png" width="100" style="border-radius: 4px;" height="24" />
+<img src="demos/goaccess.gif" width=600>
+
+<img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana" style="border-radius: 4px;" height="24" />
+<img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" alt="Prometheus" style="border-radius: 4px;" height="24" />
+<img src="demos/monitor.png" width=600>
+
+## Getting Started
+
+### Requirements
+
+Before running this project locally, make sure you have the following installed:
+
+- [Git](https://git-scm.com/downloads)
+- [Docker](https://docs.docker.com/engine/install/)
+
+### Local Deployment
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/dadal00/PickOne.git
+   cd PickOne
+   ```
+
+2. **Load environment**
+
+   ```bash
+   set -a
+   source .env.local
+   ```
+
+3. **Build the docker images**
+
+   ```bash
+   docker compose -f deploy/docker-build.main.yml build
+   ```
+
+4. **Start the swarm**
+
+   ```bash
+   docker swarm init
+   ```
+
+5. **Create backend hash salt**
+
+   ```bash
+   echo "89d25f97-f9eb-4bb9-a040-a67b7c1a2da1" | docker secret create RUST_HASH_SALT -
+   ```
+
+6. **Create monitoring network**
+
+   ```bash
+   docker network create \
+   --driver overlay \
+   --attachable \
+   --internal \
+   --opt encrypted \
+   monitor_net
+   ```
+
+7. **Deploy the monitoring stack**
+
+   ```bash
+   docker stack deploy -c monitor/docker-swarm.monitor.local.yml monitor
+   ```
+
+8. **Deploy the main app stack**
+
+   ```bash
+   docker stack deploy -c deploy/docker-swarm.main.local.yml counter
+   ```
