@@ -125,13 +125,20 @@ Before running this project locally, make sure you have the following installed:
    monitor_net
    ```
 
-7. **Deploy the monitoring stack**
+7. **Create necessary files**
+
+   ```bash
+   touch deploy/caddy/logs/access.log
+   touch deploy/saved_state.json
+   ```
+
+8. **Deploy the monitoring stack**
 
    ```bash
    docker stack deploy -c monitor/docker-swarm.monitor.local.yml monitor
    ```
 
-8. **Deploy the main app stack**
+9. **Deploy the main app stack**
 
    ```bash
    docker stack deploy -c deploy/docker-swarm.main.local.yml counter
