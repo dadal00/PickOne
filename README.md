@@ -149,5 +149,5 @@ Before running this project locally, make sure you have the following installed:
 
 - [Local PickOne](https://pickone/)
 - [Local Grafana](http://localhost:3000/)
-- GoAccess Report: Absolute path of `monitor/goaccess/www/report.html`
+- GoAccess Report: Paste absolute path of `monitor/goaccess/www/report.html` into browser to view live
   - Example Absolute Path: `/Users/dadal00/Documents/PickOne/monitor/goaccess/www/report.html`
