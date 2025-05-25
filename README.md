@@ -145,7 +145,7 @@ Before running this project locally, make sure you have the following installed:
    docker stack deploy -c deploy/docker-swarm.main.local.yml counter
    ```
 
-10. **Visit the local dashboards:**
+10. **Visit the local websites:**
 
 - [Local PickOne](https://pickone/)
 - [Local Grafana](http://localhost:3000/)
