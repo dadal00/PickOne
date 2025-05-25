@@ -99,6 +99,7 @@ Before running this project locally, make sure you have the following installed:
 
 - [Git](https://git-scm.com/downloads)
 - [Docker](https://docs.docker.com/engine/install/)
+- [Docker Logging Plugin](https://grafana.com/docs/loki/latest/send-data/docker-driver/)
 
 ### Local Deployment
 
