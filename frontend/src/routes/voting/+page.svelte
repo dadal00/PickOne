@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import { websocket } from '$lib/stores/websocket'
-  import BarChart from '$lib/components/BarChart.svelte'
-  import VoteButton from '$lib/components/VoteButton.svelte'
-  import TotalHeader from '$lib/components/TotalHeader.svelte'
+  import { websocket } from '$lib/voting/stores/websocket'
+  import BarChart from '$lib/voting/components/BarChart.svelte'
+  import VoteButton from '$lib/voting/components/VoteButton.svelte'
+  import TotalHeader from '$lib/voting/components/TotalHeader.svelte'
   import { browser } from '$app/environment'
-  import { Color } from '$lib/models'
+  import { Color } from '$lib/voting/models'
 
   function setVh() {
     document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)

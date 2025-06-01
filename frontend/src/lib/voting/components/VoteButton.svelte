@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Color, type ColorValue, type ClickAnimations } from '$lib/models'
-  import { websocket } from '$lib/stores/websocket'
-  import { colorConfigs } from '$lib/config'
+  import { Color, type ColorValue, type ClickAnimations } from '$lib/voting/models'
+  import { websocket } from '$lib/voting/stores/websocket'
+  import { colorConfigs } from '$lib/voting/config'
 
   const { color } = $props<{ color: Color }>()
   const colorConfig: ColorValue = colorConfigs[color as Color]
