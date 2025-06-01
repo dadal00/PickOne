@@ -21,7 +21,7 @@
 <style>
   :global(body, html) {
     margin: 0;
-    /* touch-action: manipulation; */
+    touch-action: manipulation;
   }
   .page-container {
     display: flex;
