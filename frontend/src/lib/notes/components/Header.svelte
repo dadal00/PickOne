@@ -1,6 +1,23 @@
 <script lang="ts">
-  const handleClick = (event: MouseEvent) => {
-    console.log('hello')
+  let bold = $state(false)
+  let italics = $state(false)
+  let highlight = $state(false)
+  let twoLayout = $state(false)
+
+  const login = (event: MouseEvent) => {
+    console.log('login')
+  }
+  const toggleBold = (event: MouseEvent) => {
+    bold = !bold
+  }
+  const toggleItalics = (event: MouseEvent) => {
+    italics = !italics
+  }
+  const toggleHighlight = (event: MouseEvent) => {
+    highlight = !highlight
+  }
+  const toggleLayout = (event: MouseEvent) => {
+    twoLayout = !twoLayout
   }
 </script>
 
@@ -12,7 +29,6 @@
     padding-left: 3vw;
     padding-right: 3vw;
     height: 14vh;
-    user-select: none;
     display: flex;
     flex-direction: row;
     padding-top: 3vh;
@@ -21,8 +37,20 @@
     width: fit-content;
     height: fit-content;
   }
-  .login-button:active {
-    background-color: red;
+  .clickable-container {
+    border-radius: 3px;
+    padding: 3px;
+    height: fit-content;
+  }
+  .clickable-container:hover {
+    background-color: #ffe3c6;
+    opacity: 65%;
+  }
+  .clickable-container:active {
+    background-color: #ffe3c6;
+  }
+  .clickable-container-on {
+    background-color: #ffe3c6;
   }
   .login-text {
     margin: 0;
@@ -37,7 +65,7 @@
     background-color: white;
     border: 1px solid #cfcdcd;
     border-radius: 11px;
-    padding: 1.8vh 2vw 1.8vh 2vw;
+    padding: 1.5vh 2vw 1.5vh 2vw;
     display: flex;
     flex-wrap: row;
   }
@@ -80,8 +108,7 @@
     width: calc(24px * var(--scale));
     height: calc(213px * var(--scale));
     background-repeat: no-repeat;
-    margin: calc(100px * var(--scale) / -2 + 5px) 3vw 0 3vw;
-    align-self: center;
+    margin: calc(100px * var(--scale) / -2 + 5px) -1vw 0 -1vw;
   }
   .layout-sprite {
     background-image: url('/sprites.png');
@@ -90,8 +117,7 @@
     width: calc(159px * var(--scale));
     height: calc(132px * var(--scale));
     background-repeat: no-repeat;
-    margin-top: calc(19px * var(--scale) / -2);
-    align-self: center;
+    margin-top: calc(19px * var(--scale) / -2 + 1px);
   }
   @media screen and (max-height: 800px) {
     .options-container {
@@ -129,7 +155,7 @@
       gap: 5vw;
     }
     .divider {
-      margin: calc(100px * var(--scale) / -2 + 5px) 3vw 0 3vw;
+      margin: calc(100px * var(--scale) / -2 + 5px) -2vw 0 -2vw;
     }
   }
   @media screen and (max-width: 450px) {
@@ -140,26 +166,64 @@
       gap: 8vw;
     }
     .divider {
-      margin: calc(100px * var(--scale) / -2 + 5px) 5vw 0 5vw;
+      margin: calc(100px * var(--scale) / -2 + 5px) -3vw 0 -3vw;
     }
     .login-text {
       font-size: 1.5rem;
+    }
+  }
+  @media screen and (max-aspect-ratio: 0.57) and (max-width: 450px) {
+    .clickable-container:hover {
+      background-color: none;
+      opacity: 100%;
     }
   }
 </style>
 
 <div class="header-container">
   <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <div class="login-button" role="button" onclick={handleClick} tabindex="0">
+  <div class="login-button clickable-container" role="button" onclick={login} tabindex="0">
     <p class="login-text">Login</p>
   </div>
   <div class="options-container">
     <div class="text-options-container">
-      <div class="bold-sprite"></div>
-      <div class="italics-sprite"></div>
-      <div class="highlight-sprite"></div>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <div
+        class="clickable-container {bold ? 'clickable-container-on' : ''}"
+        role="button"
+        onclick={toggleBold}
+        tabindex="0"
+      >
+        <div class="bold-sprite"></div>
+      </div>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <div
+        class="clickable-container {italics ? 'clickable-container-on' : ''}"
+        role="button"
+        onclick={toggleItalics}
+        tabindex="0"
+      >
+        <div class="italics-sprite"></div>
+      </div>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <div
+        class="clickable-container {highlight ? 'clickable-container-on' : ''}"
+        role="button"
+        onclick={toggleHighlight}
+        tabindex="0"
+      >
+        <div class="highlight-sprite"></div>
+      </div>
+      <div class="divider"></div>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <div
+        class="clickable-container {twoLayout ? 'clickable-container-on' : ''}"
+        role="button"
+        onclick={toggleLayout}
+        tabindex="0"
+      >
+        <div class="layout-sprite"></div>
+      </div>
     </div>
-    <div class="divider"></div>
-    <div class="layout-sprite"></div>
   </div>
 </div>

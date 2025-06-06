@@ -1,5 +1,9 @@
 <script lang="ts">
   let checked = $state(false)
+
+  const share = (event: MouseEvent) => {
+    console.log('share')
+  }
 </script>
 
 <style>
@@ -25,7 +29,7 @@
     height: 100%;
     background-color: antiquewhite;
   }
-  .time-left-text {
+  .note-header-text {
     margin: 0;
     padding: 0;
     color: #8e8989;
@@ -34,14 +38,6 @@
   .checkbox-container {
     position: relative;
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    margin: 0;
-    padding: 0;
-    color: #8e8989;
-    font-size: min(1rem, 2vw, 4vh);
     display: flex;
     flex-direction: row;
     margin-left: 1.5vw;
@@ -88,6 +84,19 @@
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
+  }
+  .share-button {
+    border-radius: 3px;
+    padding: 3px;
+    height: fit-content;
+    margin-left: auto;
+  }
+  .share-button:hover {
+    background-color: #ffe3c6;
+    opacity: 65%;
+  }
+  .share-button:active {
+    background-color: #ffe3c6;
   }
   @media screen and (max-width: 800px) {
     .checkmark {
@@ -161,12 +170,16 @@
 
 <div class="note-container">
   <div class="note-header">
-    <p class="time-left-text {checked ? 'checked' : ''}">48m</p>
-    <label class="checkbox-container {checked ? 'checked' : ''}">
+    <p class="note-header-text {checked ? 'checked' : ''}">48m</p>
+    <label class="checkbox-container note-header-text {checked ? 'checked' : ''}">
       Vanishing
       <input type="checkbox" bind:checked />
       <span class="checkmark"></span>
     </label>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div class="share-button" role="button" onclick={share} tabindex="0">
+      <p class="note-header-text">Share</p>
+    </div>
   </div>
   <div class="text-box"></div>
 </div>
