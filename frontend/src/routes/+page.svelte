@@ -40,6 +40,10 @@
     touch-action: manipulation;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: #5e5757;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   .page-container {
     display: flex;
