@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
   import { browser } from '$app/environment'
+  import Header from '$lib/notes/components/Header.svelte'
+  import NotesContainer from '$lib/notes/components/NotesContainer.svelte'
 
   function setVh() {
     document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)
@@ -19,9 +21,25 @@
 </script>
 
 <style>
+  :root {
+    --scale: 0.17;
+  }
+
+  @media screen and (max-height: 500px) {
+    :root {
+      --scale: 0.14;
+    }
+  }
+  @media screen and (max-height: 300px) {
+    :root {
+      --scale: 0.12;
+    }
+  }
   :global(body, html) {
     margin: 0;
     touch-action: manipulation;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #5e5757;
   }
   .page-container {
     display: flex;
@@ -34,4 +52,7 @@
   }
 </style>
 
-<main class="page-container"></main>
+<main class="page-container">
+  <Header></Header>
+  <NotesContainer></NotesContainer>
+</main>

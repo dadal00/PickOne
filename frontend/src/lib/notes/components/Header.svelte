@@ -6,7 +6,6 @@
 
 <style>
   .header-container {
-    /* background-color: pink; */
     position: fixed;
     left: 0;
     right: 0;
