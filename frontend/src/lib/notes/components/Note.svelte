@@ -157,12 +157,6 @@
       top: 0px;
     }
   }
-  /* @media screen and (max-height: 400px) and (max-width: 700px) {
-    .checkmark {
-      top: 1px;
-      left: 9vw;
-    }
-  } */
 </style>
 
 <div class="note-container">

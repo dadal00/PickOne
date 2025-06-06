@@ -44,7 +44,7 @@
   .text-options-container {
     display: flex;
     flex-wrap: row;
-    gap: 2.5vw;
+    gap: 3vw;
     height: fit-content;
     align-self: center;
   }
@@ -80,7 +80,7 @@
     width: calc(24px * var(--scale));
     height: calc(213px * var(--scale));
     background-repeat: no-repeat;
-    margin: calc(100px * var(--scale) / -2 + 5px) 1.5vw 0 1.5vw;
+    margin: calc(100px * var(--scale) / -2 + 5px) 3vw 0 3vw;
     align-self: center;
   }
   .layout-sprite {
@@ -122,6 +122,28 @@
     }
     .login-button {
       margin-top: 2vh;
+    }
+  }
+  @media screen and (max-width: 700px) {
+    .text-options-container {
+      gap: 5vw;
+    }
+    .divider {
+      margin: calc(100px * var(--scale) / -2 + 5px) 3vw 0 3vw;
+    }
+  }
+  @media screen and (max-width: 450px) {
+    .options-container {
+      padding: 1.8vh 4vw 1.8vh 4vw;
+    }
+    .text-options-container {
+      gap: 8vw;
+    }
+    .divider {
+      margin: calc(100px * var(--scale) / -2 + 5px) 5vw 0 5vw;
+    }
+    .login-text {
+      font-size: 1.5rem;
     }
   }
 </style>
