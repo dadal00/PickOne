@@ -15,33 +15,12 @@ PickOne is a real-time voting system.
 
 ## Table of Contents
 
-- [Features](#features)
 - [Built With](#built-with)
   - [Technologies](#technologies)
   - [Architectural Diagram](#architecture-diagram)
   - [Architecture Explanation](#architecture-explanation)
 - [Additional Demos](#additional-demos)
 - [Getting Started](#getting-started)
-
-## Features
-
-### Real Time
-
-- Concurrent Users
-- Live Broadcasts to All
-
-### Frontend
-
-- Live Bar Chart
-- Click Animations
-- Button Animations
-- Mobile Resolutions
-
-### Websockets
-
-- Timeouts
-- Automatic Reconnection
-- Sanitization of Messages
 
 ## Built With
 
