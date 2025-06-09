@@ -86,6 +86,7 @@
     transform: rotate(45deg);
   }
   .share-button {
+    all: unset;
     border-radius: 3px;
     padding: 3px;
     height: fit-content;
@@ -176,10 +177,9 @@
       <input type="checkbox" bind:checked />
       <span class="checkmark"></span>
     </label>
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <div class="share-button" role="button" onclick={share} tabindex="0">
+    <button class="share-button" onclick={share}>
       <p class="note-header-text">Share</p>
-    </div>
+    </button>
   </div>
   <div class="text-box"></div>
 </div>

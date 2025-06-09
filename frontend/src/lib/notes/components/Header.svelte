@@ -38,6 +38,7 @@
     height: fit-content;
   }
   .clickable-container {
+    all: unset;
     border-radius: 3px;
     padding: 3px;
     height: fit-content;
@@ -181,49 +182,40 @@
 </style>
 
 <div class="header-container">
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <div class="login-button clickable-container" role="button" onclick={login} tabindex="0">
+  <button class="login-button clickable-container" onclick={login}>
     <p class="login-text">Login</p>
-  </div>
+  </button>
   <div class="options-container">
     <div class="text-options-container">
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div
+      <button
         class="clickable-container {bold ? 'clickable-container-on' : ''}"
-        role="button"
         onclick={toggleBold}
-        tabindex="0"
+        aria-label="bold button"
       >
         <div class="bold-sprite"></div>
-      </div>
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div
+      </button>
+      <button
         class="clickable-container {italics ? 'clickable-container-on' : ''}"
-        role="button"
         onclick={toggleItalics}
-        tabindex="0"
+        aria-label="italics button"
       >
         <div class="italics-sprite"></div>
-      </div>
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div
+      </button>
+      <button
         class="clickable-container {highlight ? 'clickable-container-on' : ''}"
-        role="button"
         onclick={toggleHighlight}
-        tabindex="0"
+        aria-label="highlight button"
       >
         <div class="highlight-sprite"></div>
-      </div>
+      </button>
       <div class="divider"></div>
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div
+      <button
         class="clickable-container {twoLayout ? 'clickable-container-on' : ''}"
-        role="button"
         onclick={toggleLayout}
-        tabindex="0"
+        aria-label="layout button"
       >
         <div class="layout-sprite"></div>
-      </div>
+      </button>
     </div>
   </div>
 </div>
