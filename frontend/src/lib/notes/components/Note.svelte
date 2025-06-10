@@ -1,4 +1,6 @@
 <script lang="ts">
+  import TabsContainer from './TabsContainer.svelte'
+
   let checked = $state(false)
 
   const share = (event: MouseEvent) => {
@@ -8,14 +10,16 @@
 
 <style>
   .note-container {
-    width: 50%;
+    margin-top: 17vh;
+    width: 100%;
+    height: 86%;
     background-color: white;
-    height: 100%;
     border: 4px solid #f2dfcb;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     padding: 0 2.5vw 4vh 2.5vw;
+    z-index: 1;
   }
   .note-header {
     display: flex;
@@ -167,8 +171,15 @@
       top: 0px;
     }
   }
+  @media screen and (max-aspect-ratio: 0.57) and (max-width: 450px) {
+    .checkmark {
+      left: 10.5vw;
+      top: -2px;
+    }
+  }
 </style>
 
+<TabsContainer></TabsContainer>
 <div class="note-container">
   <div class="note-header">
     <p class="note-header-text {checked ? 'checked' : ''}">48m</p>
