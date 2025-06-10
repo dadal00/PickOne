@@ -2,7 +2,6 @@
   let bold = $state(false)
   let italics = $state(false)
   let highlight = $state(false)
-  let twoLayout = $state(false)
 
   const login = (event: MouseEvent) => {
     console.log('login')
@@ -15,9 +14,6 @@
   }
   const toggleHighlight = (event: MouseEvent) => {
     highlight = !highlight
-  }
-  const toggleLayout = (event: MouseEvent) => {
-    twoLayout = !twoLayout
   }
 </script>
 
