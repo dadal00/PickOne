@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { websocket } from '$lib/stores/websocket'
+  import { websocket } from '$lib/voting/stores/websocket'
 </script>
 
 <style>

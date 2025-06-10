@@ -1,11 +1,11 @@
 <script lang="ts">
   import * as d3 from 'd3'
   import { onMount, onDestroy } from 'svelte'
-  import { websocket, connected } from '$lib/stores/websocket'
+  import { websocket, connected } from '$lib/voting/stores/websocket'
   import VisibilityChange from 'svelte-visibility-change'
-  import { visibility } from '$lib/stores/visibility'
-  import { Color, type ChartData } from '$lib/models'
-  import { colorConfigs } from '$lib/config'
+  import { visibility } from '$lib/voting/stores/visibility'
+  import { Color, type ChartData } from '$lib/voting/models'
+  import { colorConfigs } from '$lib/voting/config'
 
   const data = $derived(
     Object.entries($websocket)
