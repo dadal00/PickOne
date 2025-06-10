@@ -1,11 +1,37 @@
 <script lang="ts">
   import TabsContainer from './TabsContainer.svelte'
+  import { Editor } from '@tiptap/core'
+  import Document from '@tiptap/extension-document'
+  import Text from '@tiptap/extension-text'
+  import Paragraph from '@tiptap/extension-paragraph'
+  import { onMount, onDestroy } from 'svelte'
 
   let checked = $state(false)
+  let editor: Editor | null = null
+  let editorContainer: HTMLDivElement | null = null
 
   const share = (event: MouseEvent) => {
     console.log('share')
   }
+  onMount(() => {
+    if (editorContainer) {
+      editor = new Editor({
+        element: editorContainer,
+        autofocus: true,
+        extensions: [Document, Paragraph, Text],
+        content: '<p>Start writing your notes here...</p>',
+        onTransaction: () => {
+          editor = editor
+        },
+      })
+    }
+  })
+
+  onDestroy(() => {
+    if (editor) {
+      editor.destroy()
+    }
+  })
 </script>
 
 <style>
@@ -192,5 +218,5 @@
       <p class="note-header-text">Share</p>
     </button>
   </div>
-  <div class="text-box"></div>
+  <div class="text-box" bind:this={editorContainer}></div>
 </div>
