@@ -102,24 +102,6 @@
     background-repeat: no-repeat;
     margin-top: calc(19px * var(--scale) / -2);
   }
-  .divider {
-    background-image: url('/sprites.png');
-    background-position: calc(-273px * var(--scale)) calc(-1px * var(--scale));
-    background-size: calc(298px * var(--scale)) calc(357px * var(--scale));
-    width: calc(24px * var(--scale));
-    height: calc(213px * var(--scale));
-    background-repeat: no-repeat;
-    margin: calc(100px * var(--scale) / -2 + 5px) -1vw 0 -1vw;
-  }
-  .layout-sprite {
-    background-image: url('/sprites.png');
-    background-position: calc(-1px * var(--scale)) calc(-135px * var(--scale));
-    background-size: calc(298px * var(--scale)) calc(357px * var(--scale));
-    width: calc(159px * var(--scale));
-    height: calc(132px * var(--scale));
-    background-repeat: no-repeat;
-    margin-top: calc(19px * var(--scale) / -2 + 1px);
-  }
   @media screen and (max-height: 800px) {
     .options-container {
       height: 3vh;
@@ -155,9 +137,6 @@
     .text-options-container {
       gap: 5vw;
     }
-    .divider {
-      margin: calc(100px * var(--scale) / -2 + 5px) -2vw 0 -2vw;
-    }
   }
   @media screen and (max-width: 450px) {
     .options-container {
@@ -165,9 +144,6 @@
     }
     .text-options-container {
       gap: 8vw;
-    }
-    .divider {
-      margin: calc(100px * var(--scale) / -2 + 5px) -3vw 0 -3vw;
     }
     .login-text {
       font-size: 1.5rem;
@@ -207,14 +183,6 @@
         aria-label="highlight button"
       >
         <div class="highlight-sprite"></div>
-      </button>
-      <div class="divider"></div>
-      <button
-        class="clickable-container {twoLayout ? 'clickable-container-on' : ''}"
-        onclick={toggleLayout}
-        aria-label="layout button"
-      >
-        <div class="layout-sprite"></div>
       </button>
     </div>
   </div>
