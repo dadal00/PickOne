@@ -89,32 +89,38 @@ Before running this project locally, make sure you have the following installed:
    cd PickOne
    ```
 
-2. **Load environment**
+2. **Add this to /etc/hosts**
+
+   ```bash
+   127.0.0.1	boiler
+   ```
+
+3. **Load environment**
 
    ```bash
    set -a
    source .env.local
    ```
 
-3. **Build the docker images**
+4. **Build the docker images**
 
    ```bash
    docker compose -f deploy/docker-build.main.yml build
    ```
 
-4. **Start the swarm**
+5. **Start the swarm**
 
    ```bash
    docker swarm init
    ```
 
-5. **Create backend hash salt**
+6. **Create backend hash salt**
 
    ```bash
    echo "your-own-salt" | docker secret create RUST_HASH_SALT -
    ```
 
-6. **Create monitoring network**
+7. **Create monitoring network**
 
    ```bash
    docker network create \
@@ -125,7 +131,7 @@ Before running this project locally, make sure you have the following installed:
    monitor_net
    ```
 
-7. **Create necessary files**
+8. **Create necessary files**
 
    ```bash
    touch deploy/caddy/logs/access.log
@@ -133,19 +139,19 @@ Before running this project locally, make sure you have the following installed:
    touch monitor/goaccess/www/report.html
    ```
 
-8. **Deploy the monitoring stack**
+9. **Deploy the monitoring stack**
 
    ```bash
    docker stack deploy -c monitor/docker-swarm.monitor.local.yml monitor
    ```
 
-9. **Deploy the main app stack**
+10. **Deploy the main app stack**
 
-   ```bash
-   docker stack deploy -c deploy/docker-swarm.main.local.yml counter
-   ```
+    ```bash
+    docker stack deploy -c deploy/docker-swarm.main.local.yml counter
+    ```
 
-10. **Visit the local websites**
+11. **Visit the local websites**
 
 - [Local PickOne](https://pickone/)
 - [Local Grafana](http://localhost:3000/)
