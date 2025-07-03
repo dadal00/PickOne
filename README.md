@@ -92,7 +92,7 @@ Before running this project locally, make sure you have the following installed:
 2. **Add this to /etc/hosts**
 
    ```bash
-   127.0.0.1	boiler
+   127.0.0.1	pickone
    ```
 
 3. **Load environment**
