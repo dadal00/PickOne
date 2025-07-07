@@ -9,8 +9,6 @@
 
 PickOne is a real-time voting system.
 
-**System Design Discussion:** [Medium](https://medium.com/@dylanadal.00/design-documentation-pickone-189e5d5f0bc1)
-
 **Try it live:** [pickone.cc](https://pickone.cc/)
 
 <img src="demos/live.gif" width=600 alt="GIF demonstrating live voting website">
